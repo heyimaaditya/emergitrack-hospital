@@ -81,3 +81,31 @@ app.get("/",(req,res)=>{
 });
 var latitude;
 var longitude;
+app.post("/",async(req,res)=>{
+  try{
+    var state=req.body.state;
+    var city=req.body.city;
+    var apiUrl="https://nominatim.openstreetmap.org/search";
+    var params={
+      q:city + ", " + state,
+      format:"json",
+      limit:1
+    };
+    var queryString=Object.keys(params).map(function(key){
+      return encodeURIComponent(key) + "=" + encodeURIComponent(params[key]);
+    }).join("&");
+    var url=apiUrl + "?" + queryString;
+    var response=await fetch(url);
+    const data=await response.json();
+    if(data.length>0){
+      latitude=data[0].lat;
+      longitude=data[0].lon;
+    }else{
+      console.log("Coordinates not found for the specified location.");
+    }
+    res.redirect("hospital");
+  }catch(error){
+    console.log("An error occured: "+error);
+
+  }
+});
