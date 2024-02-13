@@ -382,3 +382,67 @@ app.post("/activeDriver",(req,res)=>{
   });
   
 });
+app.post("/assignDriver",(req,res)=>{
+  var hospitalName=req.body.hospitalName;
+  var hospitalAddress=req.body.hospitalAddress;
+  var patientId=req.body.patientId;
+  var driverId=req.body.driverId;
+ 
+  hospitallist.findOneAndUpdate({hospitalName:hospitalName,hospitalAddress:hospitalAddress,"driver.driverId":driverId},{$set:{"driver.$.driverStatus":"working","driver.$.patientAssign":patientId}}).then((hospital)=>{
+    if(!hospital){
+        res.send("hospital not found");
+    }
+    else{
+        hospitallist.findOneAndUpdate({hospitalName:hospitalName,hospitalAddress:hospitalAddress,"patient._id":patientId},{$set:{"patient.$.patientStatus":"active","patient.$.ambuTrack":"ambulance assigned"}}).then((hospital)=>{
+            if(!hospital){
+                res.send("2nd time hospital is not found");
+            }
+            else{
+                res.redirect("/pending");
+            }
+        }).catch((err)=>{
+            res.send(err);
+        });
+    }
+  }).catch((err)=>{
+    res.send(err);
+  })
+});
+
+
+app.post("/WorkingDriver",(req,res)=>{
+var hospitalAddress=req.body.hospitalAddress;
+var patientId=req.body.patientId;
+hospitallist.findOne({hospitalName:hospitalName,hospitalAddress:hospitalAddress}).then((hospital)=>{
+ if(!hospital){
+     res.send("hospital not found");
+ }
+ else{
+     const driver=hospital.driver.filter((driver)=>driver.driverStatus==="working");
+    res.render("WorkingDriver",{hospitalName:hospitalName,hospitalAddress:hospitalAddress,patientId:patientId,driver:driver});
+ }
+}).catch((err)=>{
+ res.send(err);
+});
+});
+
+app.post("InActiveDriver",(req,res)=>{
+var hospitalAddress=req.body.hospitalAddress;
+var patientId=req.body.patientId;
+hospitallist.findOne({hospitalName:hospitalName,hospitalAddress:hospitalAddress}).then((hospital)=>{
+ if(!hospital){
+     res.send("hospital not found");
+ }
+ else{
+     const driver=hospital.driver.filter((driver)=>driver.driverStatus==="sleep");
+    res.render("InActiveDriver",{hospitalName:hospitalName,hospitalAddress:hospitalAddress,patientId:patientId,driver:driver});
+ }
+}).catch((err)=>{
+ res.send(err);
+});
+});
+
+
+
+
+app.listen(process.env.PORT || 3001);
