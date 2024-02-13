@@ -218,3 +218,23 @@ app.post("/signup",(req,res)=>{
   hospitalAddress=req.body.hospitalAddress;
   res.render("signup",{hospitalName:hospitalName,hospitalAddress:hospitalAddress});
 });
+app.post("/register",(req,res)=>{
+  hospitalName=req.body.hospitalName;
+  hospitalAddress=req.body.hospitalAddress;
+  hospitallist.findOne({ hospitalName:hospitalName , hospitalAddress:hospitalAddress}).then(function(elem) {
+      if (!elem) {
+          const newHospital = new hospitallist({
+              hospitalName:req.body.hospitalName,
+              hospitalAddress:req.body.hospitalAddress,
+              password:req.body.password
+            });
+            newHospital.save();
+            res.render("home",{hospitalName:hospitalName,hospitalAddress:hospitalAddress});
+      }
+      else{
+          res.render("login",{hospitalName:req.body.hospitalName,hospitalAddress:req.body.hospitalAddress})
+      }
+    }).catch((err) => {
+      console.log(err);
+    });
+});
