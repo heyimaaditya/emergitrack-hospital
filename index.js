@@ -109,3 +109,33 @@ app.post("/",async(req,res)=>{
 
   }
 });
+app.get("/hospital",(req,res)=>{
+  const options={
+    method:'GET',
+    hostname:'api.foursquare.com',
+    port:null,
+    path:'/v3/places/search?ll='+latitude+'%2C'+longitude+'&radius=100000&categories=15000&limit=50',
+    headers:{
+      accept:'application/json',
+      Authorization:process.env.FOURSQUARE_AUTH
+    }
+  };
+  const apiRequest=http.request(options,function(apiResponse){
+    let responseBody='';
+    apiResponse.on('data',function(chunk){
+      responseBody+=chunk;
+    });
+    apiResponse.on('end',function(){
+      const data=JSON.parse(responseBody);
+      const hospitals=data['results'];
+      const filteredHospitals=hospitals.map(hospital=>{
+        return{
+          name:hospital['name'],
+          address:hospital['location']['formatted_address']
+        };
+      });
+      res.render("hospital",{hospital:filteredHospitals});
+    });
+  });
+  apiRequest.end();
+});
