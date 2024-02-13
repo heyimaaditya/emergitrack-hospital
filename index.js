@@ -139,3 +139,58 @@ app.get("/hospital",(req,res)=>{
   });
   apiRequest.end();
 });
+app.post("/hospital",(req,res)=>{
+  var hospitalName=req.body.hospitalName;
+  var hospitalAdd=req.body.hospitalAddress;
+  res.render("login",{hospitalName:hospitalName,hospitalAddress:hospitalAddress});
+});
+app.post("/message",(req,res)=>{
+  const name=req.body.name;
+  const email=req.body.email;
+  const msg=req.body.msg;
+  const transporter=nodemailer.createTransport({
+    service:'gmail',
+    auth:{
+      user:process.env.NODEMAILER_EMAIL,
+      pass:process.env.NODEMAILER_PASS
+    },
+    port:465,
+    host:'smtp.gmail.com'
+  })
+  const mailOption1={
+    from:process.env.NODEMAILER_EMAIL,
+    to:`${email}`,
+    subject:"Ambulance Tracker customer care",
+    text:"tanks for Contacting Us "+`${name}`
+  };
+  const mailOption2={
+    from:process.env.NODEMAILER_EMAIL,
+    to:process.env.SECOND_EMAIL,
+    subject:`${name}`,
+    text:"name:- "+`${name}`+"\n email:- "+`${email}`+"\n message:- "+`${msg}`
+  }
+  transporter.sendMail(mailOption1,(error,info)=>{
+    if(error){
+      console.log(error);
+      res.send("error sending email");
+    }else{
+      console.log("email sent: "+info.response);
+      res.send("email sent successfully");
+    }
+  });
+  hospitalUser.findOne({email:email}).then(function(elem){
+    if(!elem){
+      const newUser=new hospitalUser({
+        name:name,
+        email:email
+      });
+      newUser.save();
+    }
+  }).catch((err)=>{
+    console.log(err);
+  });
+  res.render("message");
+});
+app.get("/message",(req,res)=>{
+  res.render("message");
+});
