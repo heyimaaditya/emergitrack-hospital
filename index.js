@@ -238,3 +238,24 @@ app.post("/register",(req,res)=>{
       console.log(err);
     });
 });
+app.post("/pending",(req,res)=>{
+  hospitallist.findOne({hospitalName:hospitalName,hospitalAddress:hospitalAddress}).then(function(element){
+    if(!element){
+      res.send("hospital not found");
+    }else{
+      const pending=element.patient.filter((patient)=>patient.patientStatus==="pending");
+      res.render("pending",{hospitalName:hospitalName,elem:pending,hospitalAddress:hospitalAddress});
+    }
+  })
+});
+app.get("/pending",(req,res)=>{
+  hospitallist.findOne({hospitalName:hospitalName,hospitalAddress:hospitalAddress}).then(function(element){
+      if(!element){
+          res.send("hospital not found");
+      }
+      else{
+          const pending=element.patient.filter((patient)=>patient.patientStatus==="pending");
+          res.render("pending",{hospitalName:hospitalName,elem:pending,hospitalAddress:hospitalAddress});
+      }
+  });
+});
