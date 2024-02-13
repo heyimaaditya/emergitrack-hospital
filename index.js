@@ -259,3 +259,48 @@ app.get("/pending",(req,res)=>{
       }
   });
 });
+app.post("/active",(req,res)=>{
+  hospitallist.findOne({hospitalName:hospitalName,hospitalAddress:hospitalAddress}).then((element)=>{
+        if(!element){
+          res.send("hospital not found");
+        }
+        else{
+          const active=element.patient.filter((patient)=>patient.patientStatus==="active");
+          var driverName=[];
+          var driverNum=[];
+          for(var i=0;i<active.length;i++){
+              const driver = element.driver.find((driver) => (driver.patientAssign)===active[i]._id.toString());
+              if (driver) {
+                  driverName.push(driver.driverName);
+                  driverNum.push(driver.driverNum);
+                }
+          }
+          res.render("activeCase",{hospitalName:hospitalName,elem:active,hospitalAddress:hospitalAddress,driverName:driverName,driverNum:driverNum});
+        }
+  }).catch((err)=>{
+      res.send(err);
+  });
+});
+
+app.get("/active",(req,res)=>{
+  hospitallist.findOne({hospitalName:hospitalName,hospitalAddress:hospitalAddress}).then((element)=>{
+        if(!element){
+          res.send("hospital not found");
+        }
+        else{
+          const active=element.patient.filter((patient)=>patient.patientStatus==="active");
+          var driverName=[];
+          var driverNum=[];
+          for(var i=0;i<active.length;i++){
+              const driver = element.driver.find((driver) => (driver.patientAssign)===active[i]._id.toString());
+              if (driver) {
+                  driverName.push(driver.driverName);
+                  driverNum.push(driver.driverNum);
+                }
+          }
+          res.render("activeCase",{hospitalName:hospitalName,elem:active,hospitalAddress:hospitalAddress,driverName:driverName,driverNum:driverNum});
+        }
+  }).catch((err)=>{
+      res.send(err);
+  });
+});
