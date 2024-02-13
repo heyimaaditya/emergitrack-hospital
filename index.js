@@ -344,3 +344,24 @@ app.post("/reject", async (req, res) => {
       res.status(500).send('An error occurred');
   }
 });
+app.post("/assign",async(req,res)=>{
+  var patientAddress=req.body.patientAddress;
+  var patientNum=req.body.patientNum;
+  var patientName=req.body.patientName;
+  var patientId=req.body.patientId;
+  var hospitalName=req.body.hospitalName;
+  var hospitalAddress=req.body.hospitalAddress;
+
+  hospitallist.findOneAndUpdate({hospitalName:hospitalName,hospitalAddress:hospitalAddress,"patient._id":patientId},{$set:{"patient.$.patientAddress":patientAddress,"patient.$.ambuTrack":"approved by hospital"}}).then((hospital)=>{
+   if(!hospital){
+       res.send("hospital not found");
+   }
+   else{
+       res.render("assign",{hospitalName:hospitalName,hospitalAddress:hospitalAddress,patientId:patientId});
+   }
+  }).catch((err)=>{
+   res.send(err);
+  })
+  
+});
+
