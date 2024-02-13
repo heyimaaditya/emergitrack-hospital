@@ -213,3 +213,8 @@ app.post("/login",async(req,res)=>{
     console.log(err);
   });
 });
+app.post("/signup",(req,res)=>{
+  hospitalName=req.body.hospitalName;
+  hospitalAddress=req.body.hospitalAddress;
+  res.render("signup",{hospitalName:hospitalName,hospitalAddress:hospitalAddress});
+});
