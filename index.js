@@ -328,3 +328,19 @@ app.get("/completed",(req,res)=>{
   });
 });
 
+app.post("/reject", async (req, res) => {
+  var patientId=req.body.patientId;
+  var hospitalName=req.body.hospitalName;
+  var hospitalAddress=req.body.hospitalAddress;
+  try {
+      await hospitallist.updateOne(
+          { hospitalName:hospitalName,hospitalAddress:hospitalAddress },
+          { $pull: { patient: { _id: new ObjectId(patientId) } } }
+      );
+      console.log('Subdocument deleted successfully');
+      res.redirect("pending");
+  } catch (err) {
+      console.error(err);
+      res.status(500).send('An error occurred');
+  }
+});
