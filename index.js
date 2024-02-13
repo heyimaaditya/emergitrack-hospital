@@ -43,3 +43,29 @@ db.on('error', (err) => {
 db.on('disconnected', () => {
   console.log('MongoDB disconnected');
 });
+const hospitalUserSchema=new mongoose.Schema({
+  name:String,
+  email:String
+})
+const RegisteredHospital=new mongoose.Schema({
+  hospitalName:String,
+  hospitalAddress:String,
+  password:String,
+  patient:[{
+    patientName:String,
+    patientNum:String,
+    patientAddress:String,
+    patientStatus:String,
+    ambuTrack:String
+  }],
+  driver:[{
+    driverName:String,
+    driverNum:String,
+    driverId:String,
+    driverPass:String,
+    driverStatus:String,
+    patientAssign:String
+  }]
+});
+const hospitalUser=mongoose.model("hospitalUser",hospitalUserSchema);
+const hospitallist=mongoose.model("hospitallist",RegisteredHospital);
