@@ -365,3 +365,20 @@ app.post("/assign",async(req,res)=>{
   
 });
 
+app.post("/activeDriver",(req,res)=>{
+  var hospitalName=req.body.hospitalName;
+  var hospitalAddress=req.body.hospitalAddress;
+  var patientId=req.body.patientId;
+  hospitallist.findOne({hospitalName:hospitalName,hospitalAddress:hospitalAddress}).then((hospital)=>{
+   if(!hospital){
+       res.send("hospital not found");
+   }
+   else{
+       const driver=hospital.driver.filter((driver)=>driver.driverStatus==="active");
+      res.render("activeDriver",{hospitalName:hospitalName,hospitalAddress:hospitalAddress,patientId:patientId,driver:driver});
+   }
+  }).catch((err)=>{
+   res.send(err);
+  });
+  
+});
