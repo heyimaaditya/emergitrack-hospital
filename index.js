@@ -194,3 +194,22 @@ app.post("/message",(req,res)=>{
 app.get("/message",(req,res)=>{
   res.render("message");
 });
+var hospitalName;
+var hospitalAddress;
+app.post("/login",async(req,res)=>{
+  function getvalue(){
+    hospitalName=req.body.hospitalName;
+    hospitalAddress=req.body.hospitalAddress;
+  }
+  await getvalue();
+  hospitallist.findOne({ hospitalName:hospitalName , hospitalAddress:hospitalAddress,password:req.body.password }).then(function(elem) {
+    if (!elem) {
+       res.render("login",{hospitalName:req.body.hospitalName,hospitalAddress:req.body.hospitalAddress});
+    }
+    else{
+        res.render("home",{hospitalName:hospitalName,hospitalAddress:hospitalAddress});
+    }
+  }).catch((err) => {
+    console.log(err);
+  });
+});
