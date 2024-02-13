@@ -69,3 +69,15 @@ const RegisteredHospital=new mongoose.Schema({
 });
 const hospitalUser=mongoose.model("hospitalUser",hospitalUserSchema);
 const hospitallist=mongoose.model("hospitallist",RegisteredHospital);
+app.get("/",(req,res)=>{
+  var allState=(State.getStatesOfCountry("IN"));
+  var allCities={};
+  for(var i=0;i<allState.length;i++){
+    var city=City.getCitiesOfState("IN",allState[i].isoCode);
+    allCities[allState[i].name]=city;
+  }
+  var allCitiesString=JSON.stringify(allCities);
+  res.render("hospital-home",{allState:allState,allCitiesString:allCitiesString})
+});
+var latitude;
+var longitude;
