@@ -304,3 +304,27 @@ app.get("/active",(req,res)=>{
       res.send(err);
   });
 });
+app.post("/completed",(req,res)=>{
+  hospitallist.findOne({hospitalName:hospitalName,hospitalAddress:hospitalAddress}).then(function(element){
+      if(!element){
+          res.send("hospital not found");
+      }
+      else{
+          const complete=element.patient.filter((patient)=>patient.patientStatus==="complete");
+          res.render("completeCase",{hospitalName:hospitalName,elem:complete,hospitalAddress:hospitalAddress});
+      }
+  });
+});
+
+app.get("/completed",(req,res)=>{
+  hospitallist.findOne({hospitalName:hospitalName,hospitalAddress:hospitalAddress}).then(function(element){
+      if(!element){
+          res.send("hospital not found");
+      }
+      else{
+          const complete=element.patient.filter((patient)=>patient.patientStatus==="complete");
+          res.render("completeCase",{hospitalName:hospitalName,elem:complete,hospitalAddress:hospitalAddress});
+      }
+  });
+});
+
